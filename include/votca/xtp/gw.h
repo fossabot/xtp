@@ -64,6 +64,8 @@ class GW {
     bool gw_export = false;
     std::string gw_filename = "gw_energies.log";
     std::string sigma_offdiags = "approx";
+    Index gw_mixing_order = 0;     // mixing order, default: plain update
+    double gw_mixing_alpha = 0.7;  //  mixing alpha, also linear mixing
   };
 
   void configure(const options& opt);
