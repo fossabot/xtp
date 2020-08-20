@@ -45,7 +45,7 @@ class QMSandbox : public QMTool {
   std::string _orbfile;
 };
 
-void QMSandbox::ParseUserOptions(const tools::Property& user_options) {}
+void QMSandbox::ParseUserOptions(const tools::Property&) {}
 
 bool QMSandbox::Run() { return true; }
 

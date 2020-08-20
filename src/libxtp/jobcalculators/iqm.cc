@@ -40,13 +40,9 @@ using namespace boost::filesystem;
 namespace votca {
 namespace xtp {
 
-void IQM::Initialize(const tools::Property& user_options) {
+void IQM::ParseUserOptions(const tools::Property& options) {
 
-  tools::Property options =
-      LoadDefaultsAndUpdateWithUserOptions("xtp", user_options);
-  ParseCommonOptions(options);
   QMPackageFactory::RegisterAll();
-
   ParseOptionsXML(options);
 }
 

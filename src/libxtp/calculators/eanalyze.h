@@ -18,8 +18,8 @@
  */
 
 #pragma once
-#ifndef VOTCA_XTP_EANALYZE_PRIVATE_H
-#define VOTCA_XTP_EANALYZE_PRIVATE_H
+#ifndef VOTCA_XTP_EANALYZE_H
+#define VOTCA_XTP_EANALYZE_H
 
 // Standard includes
 #include <cmath>
@@ -42,12 +42,13 @@ class EAnalyze : public QMCalculator {
  public:
   EAnalyze() = default;
 
-  ~EAnalyze() override = default;
-  bool WriteToStateFile() const override { return false; }
-  std::string Identify() override { return "eanalyze"; }
+  ~EAnalyze() final = default;
+  bool WriteToStateFile() const final { return false; }
+  std::string Identify() final { return "eanalyze"; }
 
-  void Initialize(const tools::Property &user_options) override;
-  bool EvaluateFrame(Topology &top) override;
+ protected:
+  void ParseOptions(const tools::Property &user_options) final;
+  bool RunFrame(Topology &top) final;
 
  private:
   void SiteHist(QMStateType state) const;
@@ -72,4 +73,4 @@ class EAnalyze : public QMCalculator {
 }  // namespace xtp
 }  // namespace votca
 
-#endif  // VOTCA_XTP_EANALYZE_PRIVATE_H
+#endif  // VOTCA_XTP_EANALYZE_H

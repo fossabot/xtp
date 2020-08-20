@@ -18,8 +18,8 @@
  */
 
 #pragma once
-#ifndef VOTCA_XTP_IEXCITONCL_PRIVATE_H
-#define VOTCA_XTP_IEXCITONCL_PRIVATE_H
+#ifndef VOTCA_XTP_IEXCITONCL_H
+#define VOTCA_XTP_IEXCITONCL_H
 
 // Third party includes
 #include <boost/filesystem.hpp>
@@ -45,15 +45,15 @@ namespace xtp {
 
 class IEXCITON : public ParallelXJobCalc<std::vector<Job> > {
  public:
-  void Initialize(const tools::Property &user_options) override;
+  std::string Identify() final { return "iexcitoncl"; }
 
-  std::string Identify() override { return "iexcitoncl"; }
+  void WriteJobFile(const Topology &top) final;
+  void ReadJobFile(Topology &top) final;
 
+ protected:
+  void ParseUserOptions(const tools::Property &user_options) final;
   Job::JobResult EvalJob(const Topology &top, Job &job,
-                         QMThread &opThread) override;
-
-  void WriteJobFile(const Topology &top) override;
-  void ReadJobFile(Topology &top) override;
+                         QMThread &opThread) final;
 
  private:
   QMState GetElementFromMap(const std::string &elementname) const;
@@ -64,4 +64,4 @@ class IEXCITON : public ParallelXJobCalc<std::vector<Job> > {
 
 }  // namespace xtp
 }  // namespace votca
-#endif  // VOTCA_XTP_IEXCITONCL_PRIVATE_H
+#endif  // VOTCA_XTP_IEXCITONCL_H

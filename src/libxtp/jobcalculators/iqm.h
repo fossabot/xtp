@@ -18,8 +18,8 @@
  */
 
 #pragma once
-#ifndef VOTCA_XTP_IQM_PRIVATE_H
-#define VOTCA_XTP_IQM_PRIVATE_H
+#ifndef VOTCA_XTP_IQM_H
+#define VOTCA_XTP_IQM_H
 
 // Third party includes
 #include <boost/filesystem.hpp>
@@ -50,12 +50,15 @@ namespace xtp {
 
 class IQM : public ParallelXJobCalc<std::vector<Job> > {
  public:
-  void Initialize(const tools::Property& user_options) override;
-  std::string Identify() override { return "iqm"; }
+  std::string Identify() final { return "iqm"; }
+
+  void WriteJobFile(const Topology& top) final;
+  void ReadJobFile(Topology& top) final;
+
+ protected:
+  void ParseUserOptions(const tools::Property& user_options) final;
   Job::JobResult EvalJob(const Topology& top, Job& job,
-                         QMThread& opThread) override;
-  void WriteJobFile(const Topology& top) override;
-  void ReadJobFile(Topology& top) override;
+                         QMThread& opThread) final;
 
  private:
   double GetBSECouplingFromProp(tools::Property& bseprop, const QMState& stateA,
@@ -102,4 +105,4 @@ class IQM : public ParallelXJobCalc<std::vector<Job> > {
 
 }  // namespace xtp
 }  // namespace votca
-#endif  // VOTCA_XTP_IQM_PRIVATE_H
+#endif  // VOTCA_XTP_IQM_H

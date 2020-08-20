@@ -25,14 +25,11 @@
 namespace votca {
 namespace xtp {
 
-void Neighborlist::Initialize(const tools::Property& user_options) {
+void Neighborlist::ParseOptions(const tools::Property& options) {
 
-  tools::Property options =
-      LoadDefaultsAndUpdateWithUserOptions("xtp", user_options);
+  std::vector<const tools::Property*> segs = options.Select(".segments");
 
-  std::vector<tools::Property*> segs = options.Select(".segments");
-
-  for (tools::Property* segprop : segs) {
+  for (const tools::Property* segprop : segs) {
     std::string types = segprop->get("segmentname").as<std::string>();
     double cutoff = segprop->get("cutoff").as<double>() * tools::conv::nm2bohr;
 
@@ -91,8 +88,8 @@ Index Neighborlist::DetClassicalPairs(Topology& top) {
   return classical_pairs;
 }
 
-bool Neighborlist::EvaluateFrame(Topology& top) {
-  OPENMP::setMaxThreads(_nThreads);
+bool Neighborlist::RunFrame(Topology& top) {
+
   std::cout << " Using " << OPENMP::getMaxThreads() << " threads" << std::flush;
 
   double min = top.getBox().diagonal().minCoeff();

@@ -20,6 +20,7 @@
 /// 77795ea591b29e664153f9404c8655ba28dc14e9
 
 #pragma once
+#include "votca/tools/property.h"
 #ifndef VOTCA_XTP_JOBCALCULATOR_H
 #define VOTCA_XTP_JOBCALCULATOR_H
 
@@ -41,8 +42,6 @@ class JobCalculator : public tools::Calculator {
   JobCalculator() = default;
   ~JobCalculator() override = default;
 
-  std::string Identify() override = 0;
-
   virtual bool EvaluateFrame(const Topology &top) = 0;
 
   virtual void WriteJobFile(const Topology &top) = 0;
@@ -52,6 +51,7 @@ class JobCalculator : public tools::Calculator {
   void setProgObserver(ProgObserver<std::vector<Job> > *obs) { _progObs = obs; }
 
  protected:
+  virtual void ParseUserOptions(const tools::Property &options) = 0;
   Index _openmp_threads;
   ProgObserver<std::vector<Job> > *_progObs;
 };

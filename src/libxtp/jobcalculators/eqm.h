@@ -18,8 +18,8 @@
  */
 
 #pragma once
-#ifndef VOTCA_XTP_EQM_PRIVATE_H
-#define VOTCA_XTP_EQM_PRIVATE_H
+#ifndef VOTCA_XTP_EQM_H
+#define VOTCA_XTP_EQM_H
 
 // Local VOTCA includes
 #include "votca/xtp/gwbse.h"
@@ -40,14 +40,15 @@ namespace xtp {
 
 class EQM : public ParallelXJobCalc<std::vector<Job> > {
  public:
-  std::string Identify() override { return "eqm"; }
-  void Initialize(const tools::Property &user_options) override;
-  Job::JobResult EvalJob(const Topology &top, Job &job,
-                         QMThread &opThread) override;
+  std::string Identify() final { return "eqm"; }
 
-  void CleanUp() { ; }
-  void WriteJobFile(const Topology &top) override;
-  void ReadJobFile(Topology &) override { return; }
+  void WriteJobFile(const Topology &top) final;
+  void ReadJobFile(Topology &) final { return; }
+
+ protected:
+  void ParseUserOptions(const tools::Property &user_options) final;
+  Job::JobResult EvalJob(const Topology &top, Job &job,
+                         QMThread &opThread) final;
 
  private:
   void WriteLoggerToFile(const std::string &logfile, Logger &logger);
@@ -70,4 +71,4 @@ class EQM : public ParallelXJobCalc<std::vector<Job> > {
 }  // namespace xtp
 }  // namespace votca
 
-#endif  // VOTCA_XTP_EQM_PRIVATE_H
+#endif  // VOTCA_XTP_EQM_H

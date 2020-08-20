@@ -58,20 +58,15 @@ class ParallelXJobCalc : public JobCalculator {
   ParallelXJobCalc() = default;
   ~ParallelXJobCalc() override { ; };
 
-  std::string Identify() override = 0;
+  void Initialize(const tools::Property &user_options) final {
 
-  bool EvaluateFrame(const Topology &top) override;
-  virtual void CustomizeLogger(QMThread &thread);
-  virtual Result EvalJob(const Topology &top, Job &job, QMThread &thread) = 0;
+    tools::Property options =
+        LoadDefaultsAndUpdateWithUserOptions("xtp", user_options);
+    ParseCommonOptions(options);
+    ParseUserOptions(options);
+  }
 
-  void LockCout() { _coutMutex.Lock(); }
-  void UnlockCout() { _coutMutex.Unlock(); }
-  void LockLog() { _logMutex.Lock(); }
-  void UnlockLog() { _logMutex.Unlock(); }
-
-  // ======================================== //
-  // XJOB OPERATOR (THREAD)                   //
-  // ======================================== //
+  bool EvaluateFrame(const Topology &top) final;
 
   class JobOperator : public QMThread {
    public:
@@ -80,9 +75,9 @@ class ParallelXJobCalc : public JobCalculator {
         : _top(top), _master(master), _openmp_threads(openmp_threads) {
       setId(id);
     }  // comes from baseclass so Id cannot be in initializer list
-    ~JobOperator() override = default;
+    ~JobOperator() final = default;
 
-    void Run() override;
+    void Run() final;
 
    private:
     const Topology &_top;
@@ -91,6 +86,11 @@ class ParallelXJobCalc : public JobCalculator {
   };
 
  protected:
+  void CustomizeLogger(QMThread &thread);
+
+  virtual Result EvalJob(const Topology &top, Job &job, QMThread &thread) = 0;
+
+  virtual void ParseUserOptions(const tools::Property &options) = 0;
   void ParseCommonOptions(const tools::Property &options);
   // set the basis sets and functional in DFT package
   tools::Property UpdateDFTOptions(const tools::Property &options);
@@ -98,8 +98,6 @@ class ParallelXJobCalc : public JobCalculator {
   tools::Property UpdateGWBSEOptions(const tools::Property &options);
 
   JobContainer _XJobs;
-  tools::Mutex _coutMutex;
-  tools::Mutex _logMutex;
   std::string _mapfile = "";
   std::string _jobfile = "";
 };
