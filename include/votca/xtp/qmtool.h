@@ -30,6 +30,7 @@
 #include <votca/tools/calculator.h>
 #include <votca/tools/property.h>
 
+#include "eigen.h"
 namespace votca {
 namespace xtp {
 
@@ -39,10 +40,25 @@ class QMTool : public tools::Calculator {
   ~QMTool() override = default;
 
   std::string Identify() override = 0;
-  void Initialize(const tools::Property &options) override = 0;
-  virtual bool Evaluate() = 0;
+  void Initialize(const tools::Property &options) final {
+    tools::Property user_options =
+        LoadDefaultsAndUpdateWithUserOptions("xtp", options);
+    ParseUserOptions(user_options);
+  }
+
+  bool Evaluate() {
+    OPENMP::setMaxThreads(_nThreads);
+    return Run();
+  }
+
+  void setJobname(const std::string &name) { _job_name = name; }
 
  protected:
+  virtual bool Run() = 0;
+  virtual void ParseUserOptions(const tools::Property &options) = 0;
+  const std::string &Jobname() const { return _job_name; }
+
+ private:
   std::string _job_name = "votca";
 };
 

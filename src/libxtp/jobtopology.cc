@@ -19,6 +19,7 @@
 
 // Standard includes
 #include <numeric>
+#include <string>
 
 // Local VOTCA includes
 #include "votca/xtp/checkpoint.h"
@@ -145,17 +146,15 @@ void JobTopology::ShiftPBC(const Topology& top, const Eigen::Vector3d& center,
 void JobTopology::CreateRegions(
     const tools::Property& options, const Topology& top,
     const std::vector<std::vector<SegId> >& region_seg_ids) {
-  std::string mapfile =
-      options.ifExistsReturnElseThrowRuntimeError<std::string>("mapfile");
+  std::string mapfile = options.get("mapfile").as<std::string>();
   std::vector<const tools::Property*> regions_def = options.Select("region");
   // around this point the whole jobtopology will be centered for removing pbc
   Eigen::Vector3d center = top.getSegment(region_seg_ids[0][0].Id()).getPos();
 
   for (const tools::Property* region_def : regions_def) {
-    Index id = region_def->ifExistsReturnElseThrowRuntimeError<Index>("id");
+    Index id = region_def->get("id").as<Index>();
     const std::vector<SegId>& seg_ids = region_seg_ids[id];
-    std::string type =
-        region_def->ifExistsReturnElseThrowRuntimeError<std::string>("type");
+    std::string type = region_def->get("type").as<std::string>();
     std::unique_ptr<Region> region;
     QMRegion QMdummy(0, _log, "");
     StaticRegion Staticdummy(0, _log);
@@ -255,13 +254,13 @@ std::vector<std::vector<SegId> > JobTopology::PartitionRegions(
     explicitly_named_segs_per_region.push_back(int(seg_ids.size()));
 
     if (region_def->exists("cutoff")) {
-      double cutoff = tools::conv::nm2bohr *
-                      region_def->ifExistsReturnElseThrowRuntimeError<double>(
-                          "cutoff.radius");
+      double cutoff =
+          tools::conv::nm2bohr * region_def->get("cutoff.radius").as<double>();
 
-      std::string seg_geometry =
-          region_def->ifExistsReturnElseReturnDefault<std::string>(
-              "cutoff.geometry", "n");
+      std::string seg_geometry = "n";
+      if (region_def->exists("cutoff.geometry")) {
+        seg_geometry = region_def->get("cutoff.geometry").as<std::string>();
+      }
       double min = top.getBox().diagonal().minCoeff();
       if (cutoff > 0.5 * min) {
         throw std::runtime_error(
@@ -273,8 +272,11 @@ std::vector<std::vector<SegId> > JobTopology::PartitionRegions(
       std::vector<SegId> center = seg_ids;
       if (region_def->exists("cutoff.region")) {
         Index id = region_def->get("cutoff.region").as<Index>();
-        bool only_explicit = region_def->ifExistsReturnElseReturnDefault<bool>(
-            "cutoff.relative_to_explicit_segs", false);
+        bool only_explicit = false;
+        if (region_def->exists("cutoff.relative_to_explicit_segs")) {
+          only_explicit =
+              region_def->get("cutoff.relative_to_explicit_segs").as<bool>();
+        }
         if (id < Index(segids_per_region.size())) {
           center = segids_per_region[id];
           if (only_explicit) {
@@ -322,8 +324,7 @@ void JobTopology::CheckEnumerationOfRegions(
     const std::vector<tools::Property*>& regions_def) const {
   std::vector<Index> reg_ids;
   for (const tools::Property* region_def : regions_def) {
-    reg_ids.push_back(
-        region_def->ifExistsReturnElseThrowRuntimeError<Index>("id"));
+    reg_ids.push_back(region_def->get("id").as<Index>());
   }
 
   std::vector<Index> v(reg_ids.size());

@@ -85,8 +85,7 @@ void Esp2multipole::Initialize(tools::Property& options) {
     }
   }
 
-  _gridsize = options.ifExistsReturnElseReturnDefault<std::string>(
-      key + ".gridsize", "medium");
+  _gridsize = options.get(key + ".gridsize").as<std::string>();
 
   if (options.exists(key + ".svd")) {
     _do_svd = options.get(key + ".svd.do_svd").as<bool>();

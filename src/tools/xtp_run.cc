@@ -28,16 +28,16 @@ using namespace votca;
 
 class XtpRun : public xtp::StateApplication {
  public:
-  std::string ProgramName() override { return "xtp_run"; }
+  std::string ProgramName() final { return "xtp_run"; }
 
-  void HelpText(std::ostream& out) override {
+  void HelpText(std::ostream& out) final {
     out << "Runs excitation/charge transport calculators\n";
   }
 
   void HelpText(){};
 
-  void Initialize() override;
-  bool EvaluateOptions() override;
+  void Initialize() final;
+  bool EvaluateOptions() final;
 
  private:
   // void    PrintDescription(string name, HelpOutputType _help_output_type);

@@ -37,14 +37,11 @@ void PolarRegion::Initialize(const tools::Property& prop) {
   tools::Property& prop_polar = options_polar.get("polar");
   prop_polar = prop.get("polar");
 
-  _max_iter = options_polar.ifExistsReturnElseReturnDefault(key + ".max_iter",
-                                                            _max_iter);
-  _deltaD = options_polar.ifExistsReturnElseReturnDefault(
-      key + ".tolerance_dipole", _deltaD);
-  _deltaE = options_polar.ifExistsReturnElseReturnDefault(
-      key + ".tolerance_energy", _deltaE);
-  _exp_damp = options_polar.ifExistsReturnElseReturnDefault(key + ".exp_damp",
-                                                            _exp_damp);
+  _max_iter = options_polar.get(key + ".max_iter").as<Index>();
+
+  _deltaD = options_polar.get(key + ".tolerance_dipole").as<double>();
+  _deltaE = options_polar.get(key + ".tolerance_energy").as<double>();
+  _exp_damp = options_polar.get(key + ".exp_damp").as<double>();
 }
 
 bool PolarRegion::Converged() const {

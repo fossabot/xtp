@@ -18,8 +18,8 @@
  */
 
 #pragma once
-#ifndef VOTCA_XTP_LOG2MPS_PRIVATE_H
-#define VOTCA_XTP_LOG2MPS_PRIVATE_H
+#ifndef VOTCA_XTP_LOG2MPS_H
+#define VOTCA_XTP_LOG2MPS_H
 
 // Third party includes
 #include <boost/format.hpp>
@@ -39,8 +39,8 @@ class Log2Mps : public QMTool {
 
   std::string Identify() override { return "log2mps"; }
 
-  void Initialize(const tools::Property &user_options) override;
-  bool Evaluate() override;
+  void ParseUserOptions(const tools::Property &options) final;
+  bool Run() final;
 
  private:
   std::string _package;
@@ -48,13 +48,7 @@ class Log2Mps : public QMTool {
   std::string _mpsfile;
 };
 
-void Log2Mps::Initialize(const tools::Property &user_options) {
-
-  tools::Property options =
-      LoadDefaultsAndUpdateWithUserOptions("xtp", user_options);
-
-  _job_name = options.ifExistsReturnElseReturnDefault<std::string>("job_name",
-                                                                   _job_name);
+void Log2Mps::ParseUserOptions(const tools::Property &options) {
 
   QMPackageFactory::RegisterAll();
 
@@ -65,16 +59,20 @@ void Log2Mps::Initialize(const tools::Property &user_options) {
         "XTP has no log file. For xtp package just run the partialcharges tool "
         "on you .orb file");
   }
-  _logfile = options.ifExistsReturnElseReturnDefault<std::string>(
-      ".logfile", _job_name + ".log");
 
-  _mpsfile = options.ifExistsReturnElseReturnDefault<std::string>(
-      ".mpsfile", _job_name + ".mps");
+  _logfile = options.get(".logfile").as<std::string>();
+  if (_logfile.empty()) {
+    _logfile = Jobname() + ".log";
+  }
+  _mpsfile = options.get(".mpsfile").as<std::string>();
+  if (_mpsfile.empty()) {
+    _mpsfile = Jobname() + ".mps";
+  }
 
   std::cout << "\n... ... " << _logfile << " => " << _mpsfile << "\n";
 }
 
-bool Log2Mps::Evaluate() {
+bool Log2Mps::Run() {
 
   // Logger (required for QM package, so we can just as well use it)
   Logger log;
@@ -117,4 +115,4 @@ bool Log2Mps::Evaluate() {
 }  // namespace xtp
 }  // namespace votca
 
-#endif  // VOTCA_XTP_LOG2MPS_PRIVATE_H
+#endif  // VOTCA_XTP_LOG2MPS_H

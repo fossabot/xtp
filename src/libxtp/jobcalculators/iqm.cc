@@ -91,8 +91,7 @@ void IQM::ParseOptionsXML(const tools::Property& options) {
   prop_bsecoupling = options.get("bsecoupling");
 
   // read linker groups
-  std::string linker =
-      options.ifExistsReturnElseReturnDefault<std::string>(".linker_names", "");
+  std::string linker = options.get(".linker_names").as<std::string>();
   tools::Tokenizer toker(linker, ", \t\n");
   std::vector<std::string> linkers = toker.ToVector();
   for (const std::string& link : linkers) {

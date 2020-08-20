@@ -26,24 +26,22 @@
 namespace votca {
 namespace xtp {
 
-void APDFT::Initialize(const tools::Property &user_options) {
-
-  tools::Property options =
-      LoadDefaultsAndUpdateWithUserOptions("xtp", user_options);
-
-  _job_name = options.ifExistsReturnElseReturnDefault<std::string>("job_name",
-                                                                   _job_name);
+void APDFT::ParseUserOptions(const tools::Property &options) {
 
   _grid_accuracy = options.get(".grid").as<std::string>();
-  _orbfile = options.ifExistsReturnElseReturnDefault<std::string>(
-      ".input", _job_name + ".orb");
-  _outputfile = options.ifExistsReturnElseReturnDefault<std::string>(
-      ".output", _job_name + "_state.dat");
+  _orbfile = options.get(".input").as<std::string>();
+  if (_orbfile.empty()) {
+    _orbfile = Jobname() + ".orb";
+  }
+  _outputfile = options.get(".output").as<std::string>();
+  if (_outputfile.empty()) {
+    _outputfile = Jobname() + "_state.dat";
+  }
   std::string statestring = options.get(".state").as<std::string>();
   _state.FromString(statestring);
 }
 
-bool APDFT::Evaluate() {
+bool APDFT::Run() {
 
   Orbitals orb;
   orb.ReadFromCpt(_orbfile);

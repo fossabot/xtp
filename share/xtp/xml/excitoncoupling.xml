@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <options>
   <excitoncoupling help="Exciton couplings from serialized orbital files" section="sec:bsecoupling">
+    <output help="File to write to. defaults to '-n'_excitoncoupling.xml" default=""/>
     <use_classical help="Calculate Couplings from classical charges instead of ab-initio" default="false" choices="bool"/>
     <mpsA help="classical transition charges for segment A"/>
     <mpsB help="classical transition charges for segment B"/>

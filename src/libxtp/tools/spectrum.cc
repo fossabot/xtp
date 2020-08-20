@@ -32,20 +32,16 @@
 namespace votca {
 namespace xtp {
 
-void Spectrum::Initialize(const tools::Property& user_options) {
+void Spectrum::ParseUserOptions(const tools::Property& options) {
 
-  tools::Property options =
-      LoadDefaultsAndUpdateWithUserOptions("xtp", user_options);
-
-  _job_name = options.ifExistsReturnElseReturnDefault<std::string>("job_name",
-                                                                   _job_name);
-
-  // orbitals file or pure DFT output
-  _orbfile = options.ifExistsReturnElseReturnDefault<std::string>(
-      ".orbitals", _job_name + ".orb");
-
-  _output_file = options.ifExistsReturnElseReturnDefault<std::string>(
-      ".output", _job_name + "_spectrum.dat");
+  _orbfile = options.get(".input").as<std::string>();
+  if (_orbfile.empty()) {
+    _orbfile = Jobname() + ".orb";
+  }
+  _output_file = options.get(".output").as<std::string>();
+  if (_output_file.empty()) {
+    _output_file = Jobname() + "._spectrum.dat";
+  }
 
   _n_pt = options.get(".points").as<Index>();
   _lower = options.get(".lower").as<double>();
@@ -58,8 +54,7 @@ void Spectrum::Initialize(const tools::Property& user_options) {
   _shiftby = options.get(".shift").as<double>();
 }
 
-bool Spectrum::Evaluate() {
-  OPENMP::setMaxThreads(_nThreads);
+bool Spectrum::Run() {
   _log.setReportLevel(Log::current_level);
   _log.setMultithreading(true);
 

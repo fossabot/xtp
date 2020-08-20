@@ -39,8 +39,7 @@ void BSECoupling::Initialize(Property& options) {
 
   std::string key = Identify();
 
-  string spintype =
-      options.ifExistsReturnElseThrowRuntimeError<std::string>(key + ".spin");
+  string spintype = options.get(key + ".spin").as<std::string>();
   if (spintype == "all") {
     _doSinglets = true;
     _doTriplets = true;
@@ -55,9 +54,6 @@ void BSECoupling::Initialize(Property& options) {
          spintype)
             .str());
   }
-
-  _output_perturbation = options.ifExistsReturnElseReturnDefault<bool>(
-      key + ".use_perturbation", _output_perturbation);
 
   _levA = options.get(key + ".moleculeA.states").as<Index>();
   _levB = options.get(key + ".moleculeB.states").as<Index>();
@@ -92,14 +88,10 @@ void BSECoupling::WriteToProperty(Property& summary, const QMState& stateA,
 void BSECoupling::Addoutput(Property& type_summary, const Orbitals&,
                             const Orbitals&) const {
   tools::Property& bsecoupling = type_summary.add(Identify(), "");
-  string algorithm = "j_diag";
-  if (_output_perturbation) {
-    algorithm = "j_pert";
-  }
   if (_doSinglets) {
     QMStateType singlet = QMStateType(QMStateType::Singlet);
     Property& singlet_summary = bsecoupling.add(singlet.ToLongString(), "");
-    singlet_summary.setAttribute("algorithm", algorithm);
+    singlet_summary.setAttribute("algorithm", "j_pert");
     for (Index stateA = 0; stateA < _levA; ++stateA) {
       QMState qmstateA = QMState(singlet, stateA, false);
       for (Index stateB = 0; stateB < _levB; ++stateB) {
@@ -112,7 +104,7 @@ void BSECoupling::Addoutput(Property& type_summary, const Orbitals&,
   if (_doTriplets) {
     QMStateType triplet = QMStateType(QMStateType::Triplet);
     Property& triplet_summary = bsecoupling.add(triplet.ToLongString(), "");
-    triplet_summary.setAttribute("algorithm", algorithm);
+    triplet_summary.setAttribute("algorithm", "j_pert");
     for (Index stateA = 0; stateA < _levA; ++stateA) {
       QMState qmstateA = QMState(triplet, stateA, false);
       for (Index stateB = 0; stateB < _levB; ++stateB) {

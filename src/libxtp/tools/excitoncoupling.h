@@ -18,8 +18,8 @@
  */
 
 #pragma once
-#ifndef VOTCA_XTP_EXCITONCOUPLING_PRIVATE_H
-#define VOTCA_XTP_EXCITONCOUPLING_PRIVATE_H
+#ifndef VOTCA_XTP_EXCITONCOUPLING_H
+#define VOTCA_XTP_EXCITONCOUPLING_H
 
 // VOTCA includes
 #include <votca/tools/constants.h>
@@ -37,10 +37,10 @@ namespace xtp {
 
 class ExcitonCoupling : public QMTool {
  public:
-  std::string Identify() override { return "excitoncoupling"; }
+  std::string Identify() final { return "excitoncoupling"; }
 
-  void Initialize(const tools::Property& user_options) override;
-  bool Evaluate() override;
+  void ParseUserOptions(const tools::Property& options) final;
+  bool Run() final;
 
  private:
   std::string _orbA, _orbB, _orbAB;
@@ -53,13 +53,7 @@ class ExcitonCoupling : public QMTool {
   Logger _log;
 };
 
-void ExcitonCoupling::Initialize(const tools::Property& user_options) {
-
-  tools::Property options =
-      LoadDefaultsAndUpdateWithUserOptions("xtp", user_options);
-
-  _job_name = options.ifExistsReturnElseReturnDefault<std::string>("job_name",
-                                                                   _job_name);
+void ExcitonCoupling::ParseUserOptions(const tools::Property& options) {
 
   _classical = options.get(".use_classical").as<bool>();
 
@@ -75,12 +69,13 @@ void ExcitonCoupling::Initialize(const tools::Property& user_options) {
     _mpsA = options.get(".mpsA").as<std::string>();
     _mpsB = options.get(".mpsB").as<std::string>();
   }
-  _output_file = options.ifExistsReturnElseReturnDefault<std::string>(
-      "output", _job_name + "_excitoncoupling.xml");
+  _output_file = options.get(".output").as<std::string>();
+  if (_output_file.empty()) {
+    _output_file = Jobname() + "_excitoncoupling.xml";
+  }
 }
 
-bool ExcitonCoupling::Evaluate() {
-  OPENMP::setMaxThreads(_nThreads);
+bool ExcitonCoupling::Run() {
   _log.setReportLevel(Log::current_level);
   _log.setMultithreading(true);
 
@@ -148,4 +143,4 @@ bool ExcitonCoupling::Evaluate() {
 }  // namespace xtp
 }  // namespace votca
 
-#endif  // VOTCA_XTP_EXCITONCOUPLING_PRIVATE_H
+#endif  // VOTCA_XTP_EXCITONCOUPLING_H

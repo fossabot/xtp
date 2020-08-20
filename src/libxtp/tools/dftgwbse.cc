@@ -31,24 +31,20 @@
 namespace votca {
 namespace xtp {
 
-void DftGwBse::Initialize(const tools::Property& user_options) {
-
-  tools::Property options =
-      LoadDefaultsAndUpdateWithUserOptions("xtp", user_options);
-
-  _job_name = options.ifExistsReturnElseReturnDefault<std::string>("job_name",
-                                                                   _job_name);
+void DftGwBse::ParseUserOptions(const tools::Property& options) {
 
   // molecule coordinates
-  _xyzfile = options.ifExistsReturnElseReturnDefault<std::string>(
-      ".molecule", _job_name + ".xyz");
+  _xyzfile = options.get(".molecule").as<std::string>();
+  if (_xyzfile.empty()) {
+    _xyzfile = this->Jobname() + ".xyz";
+  }
 
   // job tasks
   _do_optimize = options.get(".optimize").as<bool>();
 
   // options for dft package
   _package_options = options.get(".dftpackage");
-  _package_options.add("job_name", _job_name);
+  _package_options.add("job_name", Jobname());
   _package = _package_options.get("package.name").as<std::string>();
 
   // set the basis sets and functional in DFT package
@@ -71,10 +67,10 @@ void DftGwBse::Initialize(const tools::Property& user_options) {
       .add("functional", options.get("functional").as<std::string>());
 
   // lets get the archive file name from the xyz file name
-  _archive_file = _job_name + ".orb";
+  _archive_file = Jobname() + ".orb";
 
   // XML OUTPUT
-  _xml_output = _job_name + "_summary.xml";
+  _xml_output = Jobname() + "_summary.xml";
 
   // check for MPS file with external multipoles for embedding
   _do_external = options.get("use_mpsfile").as<bool>();
@@ -97,8 +93,7 @@ void DftGwBse::Initialize(const tools::Property& user_options) {
   QMPackageFactory::RegisterAll();
 }
 
-bool DftGwBse::Evaluate() {
-  OPENMP::setMaxThreads(_nThreads);
+bool DftGwBse::Run() {
 
   _log.setReportLevel(Log::current_level);
 

@@ -46,7 +46,9 @@ class QMPackage {
 
   virtual std::string getPackageName() const = 0;
 
-  virtual void Initialize(const tools::Property& options) = 0;
+  void Initialize(const tools::Property& options) {
+    ParseCommonOptions(options);
+  }
 
   /// writes a coordinate file WITHOUT taking into account PBCs
   virtual bool WriteInputFile(const Orbitals& orbitals) = 0;
@@ -113,7 +115,8 @@ class QMPackage {
     double _q;
   };
 
-  tools::Property ParseCommonOptions(const tools::Property& options);
+  virtual void ParseOptions(const tools::Property& options) = 0;
+
   std::string FindDefaultsFile() const;
 
   virtual void WriteChargeOption() = 0;
@@ -169,6 +172,9 @@ class QMPackage {
   Logger* _pLog;
 
   std::vector<std::unique_ptr<StaticSite> > _externalsites;
+
+ private:
+  tools::Property ParseCommonOptions(const tools::Property& options);
 };
 
 }  // namespace xtp

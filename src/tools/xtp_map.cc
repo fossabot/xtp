@@ -45,15 +45,15 @@ namespace TOOLS = votca::tools;
 class XtpMap : public TOOLS::Application {
 
  public:
-  string ProgramName() override { return "xtp_map"; }
-  void HelpText(ostream& out) override {
+  string ProgramName() final { return "xtp_map"; }
+  void HelpText(ostream& out) final {
     out << "Generates QM|MD topology" << endl;
   }
-  void ShowHelpText(std::ostream& out) override;
+  void ShowHelpText(std::ostream& out) final;
 
-  void Initialize() override;
-  bool EvaluateOptions() override;
-  void Run() override;
+  void Initialize() final;
+  bool EvaluateOptions() final;
+  void Run() final;
 
  protected:
 };

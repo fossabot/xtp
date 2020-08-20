@@ -36,29 +36,29 @@ namespace xtp {
 class Orbitals;
 class Orca : public QMPackage {
  public:
-  std::string getPackageName() const override { return "orca"; }
+  std::string getPackageName() const final { return "orca"; }
 
-  void Initialize(const tools::Property& options) override;
-
-  bool WriteInputFile(const Orbitals& orbitals) override;
+  bool WriteInputFile(const Orbitals& orbitals) final;
 
   bool WriteShellScript();
 
-  bool Run() override;
+  bool Run() final;
 
-  void CleanUp() override;
+  void CleanUp() final;
 
   bool CheckLogFile();
 
-  bool ParseLogFile(Orbitals& orbitals) override;
+  bool ParseLogFile(Orbitals& orbitals) final;
 
-  bool ParseMOsFile(Orbitals& orbitals) override;
+  bool ParseMOsFile(Orbitals& orbitals) final;
 
-  StaticSegment GetCharges() const override;
+  StaticSegment GetCharges() const final;
 
-  Eigen::Matrix3d GetPolarizability() const override;
+  Eigen::Matrix3d GetPolarizability() const final;
 
  protected:
+  void ParseOptions(const tools::Property& options) final;
+
   const std::array<Index, 25>& ShellMulitplier() const final {
     return _multipliers;
   }
@@ -89,7 +89,7 @@ class Orca : public QMPackage {
   void WriteECP(std::ofstream& inp_file, const QMMolecule&);
   void WriteBackgroundCharges();
 
-  void WriteChargeOption() override;
+  void WriteChargeOption() final;
   template <class T>
   void GetCoordinates(T& mol, std::string& line,
                       std::ifstream& input_file) const;

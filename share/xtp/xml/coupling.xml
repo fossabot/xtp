@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <options>
   <coupling help="Compute the electronic couplings from log and orbital files." section="sec:coupling">
+    <output help="file to write output to defaults to jobname_output" default=""/>
     <dftpackage>
       <package>
         <name help="Name of the DFT package" default="xtp" choices="xtp,orca"/>

@@ -33,10 +33,6 @@ using std::flush;
 namespace votca {
 namespace xtp {
 
-// +++++++++++++++++++++++++++++ //
-// GWBSEENGINE MEMBER FUNCTIONS  //
-// +++++++++++++++++++++++++++++ //
-
 void GWBSEEngine::Initialize(tools::Property& options,
                              std::string archive_filename) {
 
@@ -60,34 +56,24 @@ void GWBSEEngine::Initialize(tools::Property& options,
     _do_gwbse = true;
   }
 
-  // XML option file for GWBSE
   if (_do_gwbse) {
     _gwbse_options = options.get(".gwbse_options");
   }
-  // DFT log and MO file names
+
   _MO_file = _qmpackage->getMOFile();
   _dftlog_file = _qmpackage->getLogFile();
 
-  // Logger redirection
-  _redirect_logger = options.ifExistsReturnElseReturnDefault<bool>(
-      ".redirect_logger", _redirect_logger);
+  _redirect_logger = options.get(".redirect_logger").as<bool>();
   _logger_file = "gwbse.log";
 
   // for requested merged guess, two archived orbitals objects are needed
   if (_do_guess) {
-    _guess_archiveA =
-        options.ifExistsReturnElseThrowRuntimeError<std::string>(".archiveA");
-    _guess_archiveB =
-        options.ifExistsReturnElseThrowRuntimeError<std::string>(".archiveB");
+    _guess_archiveA = options.get(".archiveA").as<std::string>();
+    _guess_archiveB = options.get(".archiveB").as<std::string>();
   }
 
   return;
 }
-
-/*
- *    CALL DFT and GWBSE modules to get excitation energies
- *
- */
 
 void GWBSEEngine::ExcitationEnergies(Orbitals& orbitals) {
 
@@ -105,9 +91,8 @@ void GWBSEEngine::ExcitationEnergies(Orbitals& orbitals) {
   }
   _qmpackage->setLog(logger);
   if (_do_dft_input) {
-    // required for merged guess
-    if (_qmpackage->GuessRequested() && _do_guess) {  // do not want to do an
-                                                      // SCF loop for a dimer
+
+    if (_qmpackage->GuessRequested() && _do_guess) {
       XTP_LOG(Log::error, *logger)
           << "Guess requested, reading molecular orbitals" << flush;
       Orbitals orbitalsA, orbitalsB;
@@ -124,7 +109,6 @@ void GWBSEEngine::ExcitationEnergies(Orbitals& orbitals) {
     }
   }
 
-  // parse DFT data, if required
   if (_do_dft_parse) {
     XTP_LOG(Log::error, *logger) << "Parsing DFT data from " << _dftlog_file
                                  << " and " << _MO_file << flush;
@@ -144,7 +128,6 @@ void GWBSEEngine::ExcitationEnergies(Orbitals& orbitals) {
     _qmpackage->CleanUp();
   }
 
-  // if no parsing of DFT data is requested, reload serialized orbitals object
   if (!_do_dft_parse && _do_gwbse) {
     XTP_LOG(Log::error, *logger)
         << "Loading serialized data from " << _archive_file << flush;

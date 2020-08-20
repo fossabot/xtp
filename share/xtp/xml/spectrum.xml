@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <options>
   <spectrum help="Convolutes singlet spectrum with gaussian or lorentzian function">
+    <input help="orbitals file to read in defaults to '-n'.orb" default=""/>
+    <output help="File to write spectrum to  defaults to '-n'_spectrum.dat" default=""/> 
     <fwhm help="peak width in eV" default="0.2" choices="float+"/>
     <lower help="lower bound of spectrum in eV" unit="eV" default="0.0" choices="float+"/>
     <upper help="upper bound of spectrum in eV" unit="eV" default="3.5" choices="float+"/>

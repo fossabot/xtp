@@ -5,6 +5,7 @@
     <outputtime help="Time difference between outputs into the trajectory file. Set to 0 if you wish to have no trajectory written out." unit="seconds" default="1E-8" choices="float+"/>
     <trajectoryfile help="Name of the trajectory file" default="trajectory.csv"/>
     <ratefile help="File to write rates" default="rates.dat"/>
+    <timefile help="Writing mobility and additional info about carriers, switched off by default" default=""/>
     <occfile help="File to write occupation" default="occupation.dat"/>
     <seed help="Integer to initialise the random number generator" default="123" choices="int+"/>
     <injectionpattern help="Name pattern that specifies on which sites injection is possible. Use the wildcard '*' to inject on any site." unit="" default="*"/>

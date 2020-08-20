@@ -48,8 +48,7 @@ void KMCMultiple::Initialize(const tools::Property& user_options) {
       (tools::conv::ev2hrt / mtobohr);  // Converting from V/m to Hartree/bohr
 
   _outputtime = options.get(".outputtime").as<double>();
-  _timefile = options.ifExistsReturnElseReturnDefault<std::string>(".timefile",
-                                                                   _timefile);
+  _timefile = options.get(".timefile").as<std::string>();
 
   std::string carriertype = options.get(".carriertype").as<std::string>();
   _carriertype = QMStateType(carriertype);

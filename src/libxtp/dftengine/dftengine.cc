@@ -42,22 +42,19 @@
 #include "votca/xtp/qmmolecule.h"
 
 using boost::format;
-using namespace boost::filesystem;
-using namespace std;
 using std::flush;
-using namespace votca::tools;
 
 namespace votca {
 namespace xtp {
 
-void DFTEngine::Initialize(Property& options) {
+void DFTEngine::Initialize(tools::Property& options) {
 
-  string key = "package";
-  const string key_xtpdft = "package.xtpdft";
-  _dftbasis_name = options.get(key + ".basisset").as<string>();
+  std::string key = "package";
+  const std::string key_xtpdft = "package.xtpdft";
+  _dftbasis_name = options.get(key + ".basisset").as<std::string>();
 
   if (options.get(key + ".use_auxbasisset").as<bool>()) {
-    _auxbasis_name = options.get(key + ".auxbasisset").as<string>();
+    _auxbasis_name = options.get(key + ".auxbasisset").as<std::string>();
   }
 
   _four_center_method =
@@ -69,32 +66,32 @@ void DFTEngine::Initialize(Property& options) {
   }
 
   if (options.get(key + ".use_ecp").as<bool>()) {
-    _ecp_name = options.get(key + ".ecp").as<string>();
+    _ecp_name = options.get(key + ".ecp").as<std::string>();
     _with_ecp = true;
   } else {
     _with_ecp = false;
   }
   _with_guess = options.get(key + ".read_guess").as<bool>();
-  _initial_guess = options.get(key_xtpdft + ".initial_guess").as<string>();
+  _initial_guess = options.get(key_xtpdft + ".initial_guess").as<std::string>();
 
-  _grid_name = options.get(key_xtpdft + ".integration_grid").as<string>();
-  _xc_functional_name = options.get(key + ".functional").as<string>();
+  _grid_name = options.get(key_xtpdft + ".integration_grid").as<std::string>();
+  _xc_functional_name = options.get(key + ".functional").as<std::string>();
 
   if (options.get(key_xtpdft + ".use_external_density").as<bool>()) {
     _integrate_ext_density = true;
-    _orbfilename = options.ifExistsReturnElseThrowRuntimeError<string>(
-        key_xtpdft + ".externaldensity.orbfile");
-    _gridquality = options.ifExistsReturnElseThrowRuntimeError<string>(
-        key_xtpdft + ".externaldensity.gridquality");
-    _state = options.ifExistsReturnElseThrowRuntimeError<string>(
-        key_xtpdft + ".externaldensity.state");
+    _orbfilename =
+        options.get(key_xtpdft + ".externaldensity.orbfile").as<std::string>();
+    _gridquality = options.get(key_xtpdft + ".externaldensity.gridquality")
+                       .as<std::string>();
+    _state =
+        options.get(key_xtpdft + ".externaldensity.state").as<std::string>();
   }
 
   if (options.get(key_xtpdft + ".use_external_field").as<bool>()) {
     _integrate_ext_field = true;
 
-    _extfield = options.ifExistsReturnElseThrowRuntimeError<Eigen::Vector3d>(
-        key_xtpdft + ".externalfield");
+    _extfield =
+        options.get(key_xtpdft + ".externalfield").as<Eigen::Vector3d>();
   }
 
   _conv_opt.Econverged =
@@ -104,7 +101,8 @@ void DFTEngine::Initialize(Property& options) {
   _max_iter =
       options.get(key_xtpdft + ".convergence.max_iterations").as<Index>();
 
-  string method = options.get(key_xtpdft + ".convergence.method").as<string>();
+  std::string method =
+      options.get(key_xtpdft + ".convergence.method").as<std::string>();
   if (method == "DIIS") {
     _conv_opt.usediis = true;
   } else if (method == "mixing") {
@@ -691,7 +689,7 @@ void DFTEngine::ConfigOrbfile(Orbitals& orb) {
 
     if (orb.hasDFTbasisName()) {
       if (orb.getDFTbasisName() != _dftbasis_name) {
-        throw runtime_error(
+        throw std::runtime_error(
             (boost::format("Basisset Name in guess orb file "
                            "and in dftengine option file differ %1% vs %2%") %
              orb.getDFTbasisName() % _dftbasis_name)
@@ -720,24 +718,25 @@ void DFTEngine::ConfigOrbfile(Orbitals& orb) {
   if (_with_guess) {
     if (orb.hasECPName() || _with_ecp) {
       if (orb.getECPName() != _ecp_name) {
-        throw runtime_error(
+        throw std::runtime_error(
             (boost::format("ECPs in orb file: %1% and options %2% differ") %
              orb.getECPName() % _ecp_name)
                 .str());
       }
     }
     if (orb.getNumberOfAlphaElectrons() != _numofelectrons / 2) {
-      throw runtime_error(
+      throw std::runtime_error(
           (boost::format("Number of electron in guess orb file: %1% and in "
                          "dftengine: %2% differ.") %
            orb.getNumberOfAlphaElectrons() % (_numofelectrons / 2))
               .str());
     }
     if (orb.getBasisSetSize() != _dftbasis.AOBasisSize()) {
-      throw runtime_error((boost::format("Number of levels in guess orb file: "
-                                         "%1% and in dftengine: %2% differ.") %
-                           orb.getBasisSetSize() % _dftbasis.AOBasisSize())
-                              .str());
+      throw std::runtime_error(
+          (boost::format("Number of levels in guess orb file: "
+                         "%1% and in dftengine: %2% differ.") %
+           orb.getBasisSetSize() % _dftbasis.AOBasisSize())
+              .str());
     }
   } else {
     orb.setNumberOfAlphaElectrons(_numofelectrons / 2);

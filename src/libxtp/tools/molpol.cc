@@ -28,20 +28,17 @@
 namespace votca {
 namespace xtp {
 
-void MolPol::Initialize(const tools::Property& user_options) {
+void MolPol::ParseUserOptions(const tools::Property& options) {
 
-  tools::Property options =
-      LoadDefaultsAndUpdateWithUserOptions("xtp", user_options);
+  std::string mps_input = options.get(".mpsinput").as<std::string>();
+  if (mps_input.empty()) {
+    mps_input = Jobname() + ".mps";
+  }
+  _mps_output = options.get(".mpsoutput").as<std::string>();
+  if (_mps_output.empty()) {
+    _mps_output = Jobname() + "_polar.mps";
+  }
 
-  _job_name = options.ifExistsReturnElseReturnDefault<std::string>("job_name",
-                                                                   _job_name);
-
-  std::string mps_input = options.ifExistsReturnElseReturnDefault<std::string>(
-      ".mpsinput", _job_name + ".mps");
-
-  _input.LoadFromFile(mps_input);
-  _mps_output = options.ifExistsReturnElseReturnDefault<std::string>(
-      ".mpsoutput", _job_name + "_polar.mps");
   _polar_options = options.get(".options_polar");
 
   // polar targer or qmpackage logfile
@@ -88,9 +85,10 @@ void MolPol::Initialize(const tools::Property& user_options) {
     _polarization_target = qmpack->GetPolarizability();
   }
 
-  Eigen::VectorXd default_weights = Eigen::VectorXd::Ones(_input.size());
-  _weights = options.ifExistsReturnElseReturnDefault<Eigen::VectorXd>(
-      ".weights", default_weights);
+  _weights = Eigen::VectorXd::Ones(_input.size());
+  if (!options.get(".weights").as<std::string>().empty()) {
+    _weights = options.get(".weights").as<Eigen::VectorXd>();
+  }
 
   _tolerance_pol = options.get(".tolerance").as<double>();
   _max_iter = options.get(".iterations").as<Index>();
@@ -160,8 +158,7 @@ void MolPol::Printpolarization(const Eigen::Matrix3d& result) const {
   std::cout << std::endl << diag * conversion << std::flush;
 }
 
-bool MolPol::Evaluate() {
-  OPENMP::setMaxThreads(_nThreads);
+bool MolPol::Run() {
   PolarSegment polar = _input;
   Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> es;
   es.computeDirect(_polarization_target, Eigen::EigenvaluesOnly);

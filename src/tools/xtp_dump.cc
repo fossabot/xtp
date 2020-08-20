@@ -31,15 +31,15 @@ using namespace votca;
 
 class XtpDump : public xtp::StateApplication {
  public:
-  string ProgramName() override { return "xtp_dump"; }
+  string ProgramName() final { return "xtp_dump"; }
 
-  void HelpText(ostream& out) override {
+  void HelpText(ostream& out) final {
     out << "Extracts information from the state file" << endl;
   }
   void HelpText(){};
 
-  void Initialize() override;
-  bool EvaluateOptions() override;
+  void Initialize() final;
+  bool EvaluateOptions() final;
 
  private:
   // void    PrintDescription(string name, HelpOutputType _help_output_type);

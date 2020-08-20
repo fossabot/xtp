@@ -95,7 +95,6 @@ class BSECoupling : public CouplingBase {
 
   bool _doTriplets = false;
   bool _doSinglets = false;
-  bool _output_perturbation = true;
   Index _levA;
   Index _levB;
   Index _occA;

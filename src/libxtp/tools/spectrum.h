@@ -18,8 +18,8 @@
  */
 
 #pragma once
-#ifndef VOTCA_XTP_SPECTRUM_PRIVATE_H
-#define VOTCA_XTP_SPECTRUM_PRIVATE_H
+#ifndef VOTCA_XTP_SPECTRUM_H
+#define VOTCA_XTP_SPECTRUM_H
 
 // Standard includes
 #include <cstdio>
@@ -41,8 +41,8 @@ class Spectrum : public QMTool {
 
   std::string Identify() override { return "spectrum"; }
 
-  void Initialize(const tools::Property& user_options) override;
-  bool Evaluate() override;
+  void ParseUserOptions(const tools::Property& options) final;
+  bool Run() final;
 
  private:
   std::string _orbfile;
@@ -77,4 +77,4 @@ class Spectrum : public QMTool {
 }  // namespace xtp
 }  // namespace votca
 
-#endif  // VOTCA_XTP_SPECTRUM_PRIVATE_H
+#endif  // VOTCA_XTP_SPECTRUM_H

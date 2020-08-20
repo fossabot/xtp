@@ -38,22 +38,22 @@ class XtpTools : public xtp::XtpApplication {
  public:
   XtpTools() = default;
 
-  ~XtpTools() override = default;
+  ~XtpTools() final = default;
 
-  std::string ProgramName() override { return "xtp_tools"; }
+  std::string ProgramName() final { return "xtp_tools"; }
 
-  void HelpText(std::ostream& out) override {
+  void HelpText(std::ostream& out) final {
     out << "Runs excitation/charge transport tools\n";
   }
 
   void SetTool(xtp::QMTool* tool) {
     _tool = std::unique_ptr<xtp::QMTool>(tool);
   }
-  void Initialize() override;
-  bool EvaluateOptions() override;
-  void Run() override;
+  void Initialize() final;
+  bool EvaluateOptions() final;
+  void Run() final;
 
-  void BeginEvaluate(Index nThreads);
+  void BeginEvaluate(Index nThreads, const std::string& jobname);
   bool Evaluate();
 
  private:
@@ -162,8 +162,6 @@ void XtpTools::Run() {
   }
 
   std::string job_name = _op_vm["name"].as<std::string>();
-  tools::Property& opts = _options.get("options." + _tool->Identify());
-  opts.add("job_name", job_name);
 
   Index nThreads = OptionsMap()["nthreads"].as<Index>();
   std::string name = ProgramName();
@@ -172,17 +170,18 @@ void XtpTools::Run() {
   }
   xtp::HelpTextHeader(name);
   std::cout << "Initializing tool\n";
-  BeginEvaluate(nThreads);
+  BeginEvaluate(nThreads, job_name);
 
   std::cout << "Evaluating tool\n";
 
   Evaluate();
 }
 
-void XtpTools::BeginEvaluate(Index nThreads = 1) {
+void XtpTools::BeginEvaluate(Index nThreads, const std::string& jobname) {
   std::cout << "... " << _tool->Identify() << " " << std::flush;
   _tool->setnThreads(nThreads);
   _tool->Initialize(_options);
+  _tool->setJobname(jobname);
 }
 
 bool XtpTools::Evaluate() {

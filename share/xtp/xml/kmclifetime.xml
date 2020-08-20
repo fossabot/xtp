@@ -4,6 +4,7 @@
     <lifetimefile help="File from which lifetimes are read in." default="lifetimes.xml"/>
     <ratefile help="File containing the rates" default="rates.dat"/>
     <trajectoryfile help="Name of the trajectory file" default="trajectory.csv"/>
+    <decayprobfile help="Writes decayprobability decay_rate/sum(rates), switched off by default" default=""/>
     <numberofinsertions>4000</numberofinsertions>
     <seed help="Integer to initialise the random number generator" default="23" choices="int+"/>
     <numberofcarriers help="Number of electrons/holes in the simulation box" default="1" choices="int+"/>

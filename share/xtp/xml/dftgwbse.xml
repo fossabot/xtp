@@ -2,6 +2,7 @@
 <options>
   <!-- xtp_tools -e dftgwbse options.xml -->
   <dftgwbse help="Compute electronic excitations using GW-BSE">
+    <xyzfile help="Filename for the run defaults to '-n'.xyz" default="" />
     <optimize help="Perform a molecular geometry optimization" default="false" choices="bool"/>
     <basisset help="Basis set for MOs" default="def2-tzvp"/>
     <auxbasisset help="Auxiliary basis set for RI" default="aux-def2-tzvp"/>

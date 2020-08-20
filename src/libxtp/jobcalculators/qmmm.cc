@@ -199,8 +199,7 @@ bool QMMM::hasQMRegion() const {
   std::vector<const tools::Property*> regions_def =
       _regions_def.Select("region");
   for (const tools::Property* reg : regions_def) {
-    std::string type =
-        reg->ifExistsReturnElseThrowRuntimeError<std::string>("type");
+    std::string type = reg->get("type").as<std::string>();
     if (QMdummy.identify() == type) {
       found_qm = true;
       break;

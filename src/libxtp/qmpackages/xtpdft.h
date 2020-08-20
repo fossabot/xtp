@@ -18,8 +18,8 @@
  */
 
 #pragma once
-#ifndef VOTCA_XTP_XTPDFT_PRIVATE_H
-#define VOTCA_XTP_XTPDFT_PRIVATE_H
+#ifndef VOTCA_XTP_XTPDFT_H
+#define VOTCA_XTP_XTPDFT_H
 
 // Standard includes
 #include <string>
@@ -42,8 +42,6 @@ namespace xtp {
 class XTPDFT : public QMPackage {
  public:
   std::string getPackageName() const final { return "xtp"; }
-
-  void Initialize(const tools::Property& options) final;
 
   bool WriteInputFile(const Orbitals& orbitals) final;
 
@@ -68,6 +66,8 @@ class XTPDFT : public QMPackage {
   }
 
  protected:
+  void ParseOptions(const tools::Property& options) final;
+
   const std::array<Index, 25>& ShellMulitplier() const final {
     return _multipliers;
   }
@@ -100,4 +100,4 @@ class XTPDFT : public QMPackage {
 }  // namespace xtp
 }  // namespace votca
 
-#endif  // VOTCA_XTP_XTPDFT_PRIVATE_H
+#endif  // VOTCA_XTP_XTPDFT_H

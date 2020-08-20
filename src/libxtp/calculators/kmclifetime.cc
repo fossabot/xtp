@@ -48,8 +48,7 @@ void KMCLifetime::Initialize(const tools::Property& user_options) {
   _insertions = options.get(".numberofinsertions").as<unsigned long>();
   _lifetimefile = options.get(".lifetimefile").as<std::string>();
 
-  _probfile = options.ifExistsReturnElseReturnDefault<std::string>(
-      ".decayprobfile", "");
+  _probfile = options.get(".decayprobfile").as<std::string>();
 
   const tools::Property& carrier_options = options.get(".carrierenergy");
   _do_carrierenergy = carrier_options.get(".run").as<bool>();

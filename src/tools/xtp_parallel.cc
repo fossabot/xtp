@@ -31,15 +31,15 @@ using namespace votca;
 
 class XtpParallel : public xtp::JobApplication {
  public:
-  string ProgramName() override { return "xtp_parallel"; }
+  string ProgramName() final { return "xtp_parallel"; }
 
-  void HelpText(ostream& out) override {
+  void HelpText(ostream& out) final {
     out << "Runs job-based heavy-duty calculators" << endl;
   }
   void HelpText(){};
 
-  void Initialize() override;
-  bool EvaluateOptions() override;
+  void Initialize() final;
+  bool EvaluateOptions() final;
 
  private:
   // void    PrintDescription(string name, HelpOutputType _help_output_type);

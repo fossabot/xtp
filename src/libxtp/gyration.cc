@@ -37,10 +37,8 @@ void Density2Gyration::Initialize(tools::Property& options) {
 
   std::string statestring = options.get(key + ".state").as<std::string>();
   _state.FromString(statestring);
-  _dostateonly = options.ifExistsReturnElseReturnDefault<bool>(
-      key + ".difference_to_groundstate", false);
-  _gridsize = options.ifExistsReturnElseReturnDefault<std::string>(
-      key + ".gridsize", "medium");
+  _dostateonly = options.get(key + ".difference_to_groundstate").as<bool>();
+  _gridsize = options.get(key + ".gridsize").as<std::string>();
 }
 
 void Density2Gyration::AnalyzeDensity(const Orbitals& orbitals) {

@@ -213,6 +213,7 @@ BOOST_AUTO_TEST_CASE(input_generation_version_4_0_1) {
   defaults << "<package>\n"
            << "<name>orca</name>\n"
            << "<charge>0</charge>\n"
+           << "<job_name>system</job_name>\n"
            << "<spin>1</spin>\n"
            << "<executable>some/path/orca</executable>\n"
            << "<basisset>" << std::string(XTP_TEST_DATA_FOLDER)

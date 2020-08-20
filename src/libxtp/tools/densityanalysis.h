@@ -18,8 +18,8 @@
  */
 
 #pragma once
-#ifndef VOTCA_XTP_DENSITYANALYSIS_PRIVATE_H
-#define VOTCA_XTP_DENSITYANALYSIS_PRIVATE_H
+#ifndef VOTCA_XTP_DENSITYANALYSIS_H
+#define VOTCA_XTP_DENSITYANALYSIS_H
 
 // Standard includes
 #include <cstdio>
@@ -38,8 +38,8 @@ class DensityAnalysis : public QMTool {
  public:
   std::string Identify() override { return "densityanalysis"; }
 
-  void Initialize(const tools::Property& user_options) override;
-  bool Evaluate() override;
+  void ParseUserOptions(const tools::Property& options) final;
+  bool Run() final;
 
  private:
   std::string _orbfile;
@@ -49,16 +49,12 @@ class DensityAnalysis : public QMTool {
   Logger _log;
 };
 
-void DensityAnalysis::Initialize(const tools::Property& user_options) {
-
-  tools::Property options =
-      LoadDefaultsAndUpdateWithUserOptions("xtp", user_options);
+void DensityAnalysis::ParseUserOptions(const tools::Property& options) {
 
   _gyration_options = options.get(".density2gyration");
 }
 
-bool DensityAnalysis::Evaluate() {
-  OPENMP::setMaxThreads(_nThreads);
+bool DensityAnalysis::Run() {
   _log.setReportLevel(Log::current_level);
   _log.setMultithreading(true);
 
@@ -79,4 +75,4 @@ bool DensityAnalysis::Evaluate() {
 }  // namespace xtp
 }  // namespace votca
 
-#endif  // VOTCA_XTP_DENSITYANALYSIS_PRIVATE_H
+#endif  // VOTCA_XTP_DENSITYANALYSIS_H

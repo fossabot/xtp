@@ -18,8 +18,8 @@
  */
 
 #pragma once
-#ifndef VOTCA_XTP_MAPCHECKER_PRIVATE_H
-#define VOTCA_XTP_MAPCHECKER_PRIVATE_H
+#ifndef VOTCA_XTP_MAPCHECKER_H
+#define VOTCA_XTP_MAPCHECKER_H
 
 // VOTCA includes
 #include <votca/tools/filesystem.h>
@@ -55,7 +55,7 @@ class MapChecker : public QMCalculator {
   std::string _mapfile = "";
 
   std::vector<QMState> _qmstates;
-  std::vector<QMState> _mdstates;
+  std::vector<QMState> _mpstates;
 };
 
 void MapChecker::Initialize(const tools::Property& user_options) {
@@ -69,14 +69,12 @@ void MapChecker::Initialize(const tools::Property& user_options) {
 
   _mpfile = options.get(".mp_pdbfile").as<std::string>();
 
-  std::string output_qm =
-      options.ifExistsReturnElseReturnDefault<std::string>(".qm_states", "");
+  std::string output_qm = options.get(".qm_states").as<std::string>();
 
   _qmstates = StringToStates(output_qm);
-  std::string output_md =
-      options.ifExistsReturnElseReturnDefault<std::string>(".mp_states", "");
-  _mdstates = StringToStates(output_md);
-  if (!(_qmstates.empty() && _mdstates.empty())) {
+  std::string output_mp = options.get(".mp_states").as<std::string>();
+  _mpstates = StringToStates(output_mp);
+  if (!(_qmstates.empty() && _mpstates.empty())) {
     _mapfile = options.get(".map_file").as<std::string>();
   }
 }
@@ -131,7 +129,7 @@ bool MapChecker::EvaluateFrame(Topology& top) {
   }
 
   PolarMapper mp(log);
-  for (QMState state : _mdstates) {
+  for (QMState state : _mpstates) {
     mp.LoadMappingFile(_mapfile);
     std::string filename_mp = AddStatetoFilename(_mpfile, state);
     csg::PDBWriter mpwriter;
@@ -164,4 +162,4 @@ std::string MapChecker::AddSteptoFilename(const std::string& filename,
 }  // namespace xtp
 }  // namespace votca
 
-#endif  // VOTCA_XTP_MAPCHECKER_PRIVATE_H
+#endif  // VOTCA_XTP_MAPCHECKER_H

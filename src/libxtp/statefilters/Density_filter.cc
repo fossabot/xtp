@@ -24,7 +24,7 @@ namespace votca {
 namespace xtp {
 
 void Density_filter::Initialize(const tools::Property& options) {
-  _threshold = options.ifExistsReturnElseThrowRuntimeError<double>(".");
+  _threshold = options.get(".").as<double>();
 }
 
 void Density_filter::Info(Logger& log) const {

@@ -1,6 +1,10 @@
 <?xml version="1.0"?>
 <options>
   <molpol help="Tool to scale distributed polarisibilites to DFT polarisibilites" section="sec:overlap">
+
+    <mpsinput help="mps file to read in without polarisation defaults to '-n'.mps" default=""/>
+    <mpsoutput help="mps file to write polarisation to '-n'_polar.mps" default=""/> 
+
     <options_polar help="Options for the electrostatic interaction">
       <tolerance_energy help="Energy change as convergence criterion" default="1e-5"/>
       <tolerance_dipole help="Field change as convergence criterion" default="1e-5"/>

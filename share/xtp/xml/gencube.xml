@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <options>
   <gencube help="Tool to generate cube files from .orb file" section="sec:gencube">
+    <output help="File to write to. defaults to '-n'.cube" default=""/>
+    <input help="Orbitals file to read  from defaults to '-n'.orb" default=""/> 
     <padding help="How far the grid should start from the molecule" unit="bohr" default="6.5" choices="float+"/>
     <xsteps help="Gridpoints in x-direction" default="25" choices="int+"/>
     <ysteps help="Gridpoints in y-direction" default="25" choices="int+"/>

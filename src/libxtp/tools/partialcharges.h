@@ -18,8 +18,8 @@
  */
 
 #pragma once
-#ifndef VOTCA_XTP_PARTIALCHARGES_PRIVATE_H
-#define VOTCA_XTP_PARTIALCHARGES_PRIVATE_H
+#ifndef VOTCA_XTP_PARTIALCHARGES_H
+#define VOTCA_XTP_PARTIALCHARGES_H
 
 // Standard includes
 #include <cstdio>
@@ -37,12 +37,11 @@ namespace xtp {
 class Partialcharges : public QMTool {
  public:
   Partialcharges() = default;
-  ~Partialcharges() override = default;
+  ~Partialcharges() final = default;
 
-  std::string Identify() override { return "partialcharges"; }
-
-  void Initialize(const tools::Property& user_options) override;
-  bool Evaluate() override;
+  std::string Identify() final { return "partialcharges"; }
+  void ParseUserOptions(const tools::Property& options) final;
+  bool Run() final;
 
  private:
   std::string _orbfile;
@@ -52,23 +51,21 @@ class Partialcharges : public QMTool {
   Logger _log;
 };
 
-void Partialcharges::Initialize(const tools::Property& user_options) {
+void Partialcharges::ParseUserOptions(const tools::Property& options) {
 
-  tools::Property options =
-      LoadDefaultsAndUpdateWithUserOptions("xtp", user_options);
+  _orbfile = options.get(".input").as<std::string>();
+  if (_orbfile.empty()) {
+    _orbfile = Jobname() + ".orb";
+  }
+  _output_file = options.get(".output").as<std::string>();
+  if (_output_file.empty()) {
+    _output_file = Jobname() + ".mps";
+  }
 
-  _job_name = options.ifExistsReturnElseReturnDefault<std::string>("job_name",
-                                                                   _job_name);
-
-  _orbfile = options.ifExistsReturnElseReturnDefault<std::string>(
-      ".input", _job_name + ".orb");
-  _output_file = options.ifExistsReturnElseReturnDefault<std::string>(
-      ".output", _job_name + ".mps");
   _esp_options = options.get(".esp_options");
 }
 
-bool Partialcharges::Evaluate() {
-  OPENMP::setMaxThreads(_nThreads);
+bool Partialcharges::Run() {
   _log.setReportLevel(Log::current_level);
   _log.setMultithreading(true);
 
@@ -92,4 +89,4 @@ bool Partialcharges::Evaluate() {
 }  // namespace xtp
 }  // namespace votca
 
-#endif  // VOTCA_XTP_PARTIALCHARGES_PRIVATE_H
+#endif  // VOTCA_XTP_PARTIALCHARGES_H

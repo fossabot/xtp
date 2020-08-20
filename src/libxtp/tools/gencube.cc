@@ -38,17 +38,16 @@
 namespace votca {
 namespace xtp {
 
-void GenCube::Initialize(const tools::Property& user_options) {
+void GenCube::ParseUserOptions(const tools::Property& options) {
 
-  tools::Property options =
-      LoadDefaultsAndUpdateWithUserOptions("xtp", user_options);
-  _job_name = options.ifExistsReturnElseReturnDefault<std::string>("job_name",
-                                                                   _job_name);
-
-  _orbfile = options.ifExistsReturnElseReturnDefault<std::string>(
-      ".input", _job_name + ".orb");
-  _output_file = options.ifExistsReturnElseReturnDefault<std::string>(
-      ".output", _job_name + ".cube");
+  _orbfile = options.get(".input").as<std::string>();
+  if (_orbfile.empty()) {
+    _orbfile = Jobname() + ".orb";
+  }
+  _output_file = options.get(".output").as<std::string>();
+  if (_output_file.empty()) {
+    _output_file = Jobname() + ".cube";
+  }
 
   // padding
   _padding = options.get(".padding").as<double>();
@@ -284,8 +283,7 @@ void GenCube::subtractCubes() {
       << "Wrote subtracted cube data to " << _output_file << std::flush;
 }
 
-bool GenCube::Evaluate() {
-  OPENMP::setMaxThreads(_nThreads);
+bool GenCube::Run() {
   _log.setReportLevel(Log::current_level);
   _log.setMultithreading(true);
 

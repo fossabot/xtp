@@ -38,8 +38,7 @@ void QMRegion::Initialize(const tools::Property& prop) {
         " must always be region 0. Currently only one qm region is possible.");
   }
 
-  std::string statestring =
-      prop.ifExistsReturnElseThrowRuntimeError<std::string>("state");
+  std::string statestring = prop.get("state").as<std::string>();
   _initstate.FromString(statestring);
   if (_initstate.Type() == QMStateType::Hole ||
       _initstate.Type() == QMStateType::Electron) {
@@ -65,10 +64,10 @@ void QMRegion::Initialize(const tools::Property& prop) {
     }
   }
 
-  _grid_accuracy_for_ext_interaction = prop.ifExistsReturnElseReturnDefault(
-      "grid_for_potential", _grid_accuracy_for_ext_interaction);
-  _DeltaE = prop.ifExistsReturnElseReturnDefault("tolerance_energy", _DeltaE);
-  _DeltaD = prop.ifExistsReturnElseReturnDefault("tolerance_density", _DeltaD);
+  _grid_accuracy_for_ext_interaction =
+      prop.get("grid_for_potential").as<std::string>();
+  _DeltaE = prop.get("tolerance_energy").as<double>();
+  _DeltaD = prop.get("tolerance_density").as<double>();
 
   _dftoptions = prop.get("options_dft");
 }
