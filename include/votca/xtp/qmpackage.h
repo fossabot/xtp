@@ -36,10 +36,6 @@ namespace xtp {
 
 class Orbitals;
 
-// ========================================================================== //
-// QMPackage base class for wrappers of ORCA
-// ========================================================================== //
-
 class QMPackage {
  public:
   virtual ~QMPackage() = default;
@@ -48,6 +44,7 @@ class QMPackage {
 
   void Initialize(const tools::Property& options) {
     ParseCommonOptions(options);
+    ParseOptions(options)
   }
 
   /// writes a coordinate file WITHOUT taking into account PBCs
@@ -98,7 +95,7 @@ class QMPackage {
     _spin = std::abs(charge) + 1;
   }
 
-  bool GuessRequested() const { return _settings.get<bool>("read_guess"); }
+  bool GuessRequested() const { return false; }
 
   virtual StaticSegment GetCharges() const = 0;
 
@@ -123,7 +120,6 @@ class QMPackage {
   std::vector<MinimalMMCharge> SplitMultipoles(const StaticSite& site) const;
   void ReorderOutput(Orbitals& orbitals) const;
   Eigen::MatrixXd ReorderMOsBack(const Orbitals& orbitals) const;
-  bool isLinker(std::string name, std::vector<std::string> linker_names);
 
   std::vector<std::string> GetLineAndSplit(std::ifstream& input_file,
                                            const std::string separators) const;
@@ -154,8 +150,6 @@ class QMPackage {
 
   virtual const std::array<Index, 25>& ShellMulitplier() const = 0;
   virtual const std::array<Index, 25>& ShellReorder() const = 0;
-
-  Settings _settings{"package"};
 
   Index _charge;
   Index _spin;  // 2S+1mem
